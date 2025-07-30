@@ -333,6 +333,92 @@
             to { transform: translate(-50%, -50%); opacity: 1; }
         }
 
+        /* 正确答案动画 */
+        @keyframes correctAnswer {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes correctBackground {
+            0% { background: white; }
+            100% { background: #e8f5e8; }
+        }
+
+        @keyframes particleEffect {
+            0% { 
+                opacity: 1;
+                transform: translate(0, 0) scale(0);
+            }
+            100% { 
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(1);
+            }
+        }
+
+        /* 错误答案动画 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes incorrectBackground {
+            0% { background: white; }
+            100% { background: #ffebee; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* 粒子效果容器 */
+        .particle-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: particleEffect 0.8s ease-out forwards;
+        }
+
+        /* 动画类 */
+        .option.correct-animate {
+            animation: correctAnswer 0.4s ease-out, correctBackground 0.3s ease-out forwards;
+        }
+
+        .option.incorrect-animate {
+            animation: shake 0.6s ease-out, incorrectBackground 0.3s ease-out forwards;
+        }
+
+        .option.pulse-hint {
+            animation: pulse 0.6s ease-in-out 2;
+        }
+
+        /* 减少动画支持 */
+        @media (prefers-reduced-motion: reduce) {
+            .option.correct-animate,
+            .option.incorrect-animate,
+            .option.pulse-hint {
+                animation: none;
+            }
+            
+            .particle {
+                animation: none;
+            }
+        }
+
         @media (max-width: 600px) {
             .header {
                 flex-direction: column;
@@ -613,20 +699,76 @@
             
             // 更新选项显示
             const options = document.querySelectorAll('.option');
-            options[optionIndex].classList.add('answered');
+            const selectedOption = options[optionIndex];
+            
+            // 添加动画效果
             if (isCorrect) {
-                options[optionIndex].classList.add('correct');
+                selectedOption.classList.add('correct-animate');
+                // 添加粒子效果
+                createParticleEffect(selectedOption);
+                // 动画结束后添加最终样式
+                setTimeout(() => {
+                    selectedOption.classList.add('correct', 'answered');
+                    selectedOption.classList.remove('correct-animate');
+                }, 400);
             } else {
-                options[optionIndex].classList.add('incorrect');
-                // 显示正确答案
+                selectedOption.classList.add('incorrect-animate');
+                // 显示正确答案并添加脉冲效果
                 options.forEach((option, index) => {
                     if (option.textContent === question.translation) {
-                        option.classList.add('correct');
+                        setTimeout(() => {
+                            option.classList.add('pulse-hint');
+                            setTimeout(() => {
+                                option.classList.add('correct', 'answered');
+                                option.classList.remove('pulse-hint');
+                            }, 1200);
+                        }, 300);
                     }
                 });
+                // 动画结束后添加最终样式
+                setTimeout(() => {
+                    selectedOption.classList.add('incorrect', 'answered');
+                    selectedOption.classList.remove('incorrect-animate');
+                }, 600);
             }
             
             updateScore();
+        }
+
+        // 创建粒子效果
+        function createParticleEffect(element) {
+            const rect = element.getBoundingClientRect();
+            const container = document.createElement('div');
+            container.className = 'particle-container';
+            element.appendChild(container);
+            
+            // 创建多个粒子
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // 设置随机方向
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 50 + Math.random() * 30;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--x', x + 'px');
+                particle.style.setProperty('--y', y + 'px');
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.marginLeft = '-4px';
+                particle.style.marginTop = '-4px';
+                
+                container.appendChild(particle);
+            }
+            
+            // 清理粒子容器
+            setTimeout(() => {
+                if (container.parentNode) {
+                    container.parentNode.removeChild(container);
+                }
+            }, 800);
         }
 
         // 上一题
