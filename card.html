@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能闪卡学习系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --surface-light: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #475569;
+            --shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #1a1f3a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        label {
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        select {
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--surface-light);
+            color: var(--text-primary);
+            font-size: 16px;
+            min-width: 220px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        select:hover {
+            border-color: var(--primary-color);
+            background: var(--surface-color);
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+        
+        input[type="checkbox"]:hover {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .checkbox-label:hover {
+            background-color: var(--surface-light);
+        }
+        
+        .checkbox-text {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .progress {
+            background: var(--surface-light);
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .card-container {
+            background: var(--surface-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--surface-light);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .question {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-primary);
+            line-height: 1.4;
+            text-align: center;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: var(--surface-color);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .option:hover::before {
+            left: 100%;
+        }
+        
+        .option:hover {
+            border-color: var(--primary-color);
+            background: var(--surface-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+        }
+        
+        .option.correct {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+        
+        .option.incorrect {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            display: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result.correct {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        .result.incorrect {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: var(--surface-light);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .ai-button {
+            background: linear-gradient(135deg, var(--secondary-color), #7c3aed);
+            margin-left: 10px;
+        }
+        
+        .ai-button:hover {
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close:hover {
+            color: var(--text-primary);
+            background: var(--surface-light);
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--surface-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--surface-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .control-group {
+                width: 100%;
+            }
+            
+            select {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-buttons {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stat-item {
+                padding: 15px;
+                border-radius: 12px;
+                background: var(--surface-color);
+            }
+            
+            .question {
+                font-size: 1.2rem;
+            }
+            
+            .option {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin: 5px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card-container {
+                padding: 20px;
+                min-height: 280px;
+            }
+            
+            .stats {
+                padding: 20px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>智能闪卡学习系统</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="book-select">选择书籍</label>
+                <select id="book-select">
+                    <option value="">请选择书籍</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="chapter-select">选择章节</label>
+                <select id="chapter-select" disabled>
+                    <option value="">请先选择书籍</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="shuffle-options" checked>
+                    <span class="checkbox-text">随机选项顺序</span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="card-container" id="card-container">
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="result" id="result"></div>
+        </div>
+        
+        <div class="navigation">
+            <button id="prev-button" disabled>上一张</button>
+            <div class="nav-buttons">
+                <button id="next-button" disabled>下一张</button>
+                <button id="ai-button" class="ai-button" disabled>AI解析</button>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="total-cards">0</div>
+                <div class="stat-label">总卡片数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="completed-cards">0</div>
+                <div class="stat-label">已完成</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="correct-rate">0%</div>
+                <div class="stat-label">正确率</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="ai-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>AI解析</h2>
+            <div class="explanation" id="ai-explanation"></div>
+        </div>
+    </div>
+
+    <script>
+        // 应用状态
+        let currentBook = null;
+        let currentChapter = null;
+        let currentCardIndex = 0;
+        let answeredCards = new Set();
+        let correctAnswers = 0;
+        let totalAttempts = 0;
+        let flashcardData = null;
+
+        // DOM元素
+        const bookSelect = document.getElementById('book-select');
+        const chapterSelect = document.getElementById('chapter-select');
+        const cardContainer = document.getElementById('card-container');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const resultElement = document.getElementById('result');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const aiButton = document.getElementById('ai-button');
+        const progressBar = document.getElementById('progress-bar');
+        const totalCardsElement = document.getElementById('total-cards');
+        const completedCardsElement = document.getElementById('completed-cards');
+        const correctRateElement = document.getElementById('correct-rate');
+        const aiModal = document.getElementById('ai-modal');
+        const aiExplanation = document.getElementById('ai-explanation');
+        const closeModal = document.querySelector('.close');
+
+        // 内嵌的备用索引数据
+        const fallbackIndex = {
+            books: [
+                {
+                    id: 'book1',
+                    title: 'JavaScript高级程序设计',
+                    description: '深入学习JavaScript编程语言的核心概念和高级特性',
+                    file: 'books/javascript-book.json',
+                    chapters_count: 2,
+                    cards_count: 4
+                },
+                {
+                    id: 'book2',
+                    title: 'CSS权威指南',
+                    description: '全面掌握CSS样式表的设计和应用',
+                    file: 'books/css-book.json',
+                    chapters_count: 1,
+                    cards_count: 2
+                }
+            ]
+        };
+
+        // 内嵌的完整书籍数据（备用）
+        const fallbackBooks = {
+            'book1': {
+                id: 'book1',
+                title: 'JavaScript高级程序设计',
+                description: '深入学习JavaScript编程语言的核心概念和高级特性',
+                chapters: [
+                    {
+                        id: 'chapter1',
+                        title: '第1章：JavaScript简介',
+                        cards: [
+                            {
+                                id: 'card1',
+                                question: 'JavaScript是一种什么类型的编程语言？',
+                                options: [
+                                    '编译型语言',
+                                    '解释型语言',
+                                    '汇编语言',
+                                    '机器语言'
+                                ],
+                                correctAnswer: 1,
+                                explanation: 'JavaScript是一种解释型语言，代码不需要编译，可以直接由浏览器解释执行。'
+                            },
+                            {
+                                id: 'card2',
+                                question: 'JavaScript是由哪家公司开发的？',
+                                options: [
+                                    '微软',
+                                    '谷歌',
+                                    '网景',
+                                    '苹果'
+                                ],
+                                correctAnswer: 2,
+                                explanation: 'JavaScript最初由网景公司的Brendan Eich在1995年开发，最初命名为LiveScript，后来改名为JavaScript。'
+                            }
+                        ]
+                    },
+                    {
+                        id: 'chapter2',
+                        title: '第2章：HTML中的JavaScript',
+                        cards: [
+                            {
+                                id: 'card3',
+                                question: '以下哪个HTML标签用于引入JavaScript代码？',
+                                options: [
+                                    '<script>',
+                                    '<js>',
+                                    '<javascript>',
+                                    '<code>'
+                                ],
+                                correctAnswer: 0,
+                                explanation: '<script>标签用于在HTML中引入JavaScript代码。'
+                            },
+                            {
+                                id: 'card4',
+                                question: '在HTML中，哪个属性用于指定JavaScript代码？',
+                                options: [
+                                    'src',
+                                    'href',
+                                    'code',
+                                    'script'
+                                ],
+                                correctAnswer: 0,
+                                explanation: 'src属性用于指定外部JavaScript文件的URL。'
+                            }
+                        ]
+                    }
+                ]
+            },
+            'book2': {
+                id: 'book2',
+                title: 'CSS权威指南',
+                description: '全面掌握CSS样式表的设计和应用',
+                chapters: [
+                    {
+                        id: 'chapter3',
+                        title: '第1章：CSS和文档',
+                        cards: [
+                            {
+                                id: 'card5',
+                                question: 'CSS的全称是什么？',
+                                options: [
+                                    'Computer Style Sheets',
+                                    'Creative Style Sheets',
+                                    'Cascading Style Sheets',
+                                    'Colorful Style Sheets'
+                                ],
+                                correctAnswer: 2,
+                                explanation: 'CSS的全称是Cascading Style Sheets（层叠样式表）。'
+                            },
+                            {
+                                id: 'card6',
+                                question: 'CSS主要用于什么？',
+                                options: [
+                                    '定义网页的结构',
+                                    '添加网页的交互性',
+                                    '控制网页的样式和布局',
+                                    '处理数据存储'
+                                ],
+                                correctAnswer: 2,
+                                explanation: 'CSS主要用于控制网页的样式和布局，包括颜色、字体、间距等。'
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        // 书籍数据缓存
+        const bookCache = new Map();
+        let booksIndex = null;
+
+        // 加载书籍索引
+        async function loadBooksIndex() {
+            try {
+                const response = await fetch('books-index.json');
+                if (!response.ok) {
+                    throw new Error('Failed to load books index');
+                }
+                booksIndex = await response.json();
+                console.log('成功加载书籍索引');
+            } catch (error) {
+                console.warn('无法加载书籍索引，使用内嵌数据:', error);
+                booksIndex = fallbackIndex;
+                console.log('使用内嵌索引数据');
+            }
+            populateBookSelect();
+        }
+
+        // 加载指定书籍的数据
+        async function loadBookData(bookId, bookFile) {
+            // 检查缓存
+            if (bookCache.has(bookId)) {
+                console.log(`从缓存加载书籍: ${bookId}`);
+                return bookCache.get(bookId);
+            }
+
+            try {
+                console.log(`加载书籍文件: ${bookFile}`);
+                const response = await fetch(bookFile);
+                if (!response.ok) {
+                    throw new Error(`Failed to load book: ${bookFile}`);
+                }
+                const bookData = await response.json();
+                bookCache.set(bookId, bookData);
+                console.log(`成功加载书籍: ${bookId}`);
+                return bookData;
+            } catch (error) {
+                console.warn(`无法加载书籍文件 ${bookFile}，使用内嵌数据:`, error);
+                const fallbackBook = fallbackBooks[bookId];
+                if (fallbackBook) {
+                    bookCache.set(bookId, fallbackBook);
+                    return fallbackBook;
+                }
+                throw new Error(`无法找到书籍 ${bookId} 的数据`);
+            }
+        }
+
+        // 初始化应用
+        function init() {
+            loadBooksIndex();
+            setupEventListeners();
+        }
+
+        // 填充书籍选择下拉菜单
+        function populateBookSelect() {
+            if (!booksIndex || !booksIndex.books) return;
+            
+            booksIndex.books.forEach(book => {
+                const option = document.createElement('option');
+                option.value = book.id;
+                option.textContent = `${book.title} (${book.chapters_count}章节, ${book.cards_count}卡片)`;
+                option.title = book.description;
+                bookSelect.appendChild(option);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            bookSelect.addEventListener('change', handleBookChange);
+            chapterSelect.addEventListener('change', handleChapterChange);
+            prevButton.addEventListener('click', showPreviousCard);
+            nextButton.addEventListener('click', showNextCard);
+            aiButton.addEventListener('click', showAIExplanation);
+            closeModal.addEventListener('click', closeAIExplanation);
+            document.getElementById('shuffle-options').addEventListener('change', () => {
+                if (currentChapter && currentChapter.cards.length > 0) {
+                    showCard(); // 重新显示当前卡片以应用新的选项顺序
+                }
+            });
+            window.addEventListener('click', (e) => {
+                if (e.target === aiModal) {
+                    closeAIExplanation();
+                }
+            });
+        }
+
+        // 处理书籍选择变化
+        async function handleBookChange() {
+            const bookId = bookSelect.value;
+            if (!bookId) {
+                currentBook = null;
+                chapterSelect.disabled = true;
+                chapterSelect.innerHTML = '<option value="">请先选择书籍</option>';
+                resetCardDisplay();
+                return;
+            }
+
+            const bookInfo = booksIndex.books.find(book => book.id === bookId);
+            if (!bookInfo) return;
+
+            try {
+                // 显示加载状态
+                bookSelect.disabled = true;
+                chapterSelect.disabled = true;
+                chapterSelect.innerHTML = '<option value="">加载中...</option>';
+                
+                // 加载书籍数据
+                currentBook = await loadBookData(bookId, bookInfo.file);
+                
+                // 填充章节选择
+                chapterSelect.disabled = false;
+                chapterSelect.innerHTML = '<option value="">请选择章节</option>';
+                
+                currentBook.chapters.forEach(chapter => {
+                    const option = document.createElement('option');
+                    option.value = chapter.id;
+                    option.textContent = chapter.title;
+                    chapterSelect.appendChild(option);
+                });
+                
+                resetCardDisplay();
+            } catch (error) {
+                console.error('加载书籍失败:', error);
+                alert('加载书籍失败，请重试');
+                chapterSelect.innerHTML = '<option value="">加载失败</option>';
+            } finally {
+                bookSelect.disabled = false;
+            }
+        }
+
+        // 处理章节选择变化
+        function handleChapterChange() {
+            const chapterId = chapterSelect.value;
+            if (!chapterId) {
+                currentChapter = null;
+                resetCardDisplay();
+                return;
+            }
+
+            currentChapter = currentBook.chapters.find(chapter => chapter.id === chapterId);
+            currentCardIndex = 0;
+            answeredCards.clear();
+            resetCardDisplay();
+            showCard();
+        }
+
+        // Fisher-Yates 洗牌算法
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 显示当前卡片
+        function showCard() {
+            if (!currentChapter || currentChapter.cards.length === 0) return;
+
+            const card = currentChapter.cards[currentCardIndex];
+            const shuffleEnabled = document.getElementById('shuffle-options').checked;
+            
+            questionElement.textContent = card.question;
+            
+            let optionsToDisplay;
+            
+            if (shuffleEnabled) {
+                // 创建选项数组并打乱顺序
+                const shuffledOptions = card.options.map((option, index) => ({
+                    text: option,
+                    originalIndex: index,
+                    isCorrect: index === card.correctAnswer
+                }));
+                
+                optionsToDisplay = shuffleArray(shuffledOptions);
+            } else {
+                // 保持原始顺序
+                optionsToDisplay = card.options.map((option, index) => ({
+                    text: option,
+                    originalIndex: index,
+                    isCorrect: index === card.correctAnswer
+                }));
+            }
+            
+            // 存储当前卡片的选项映射，用于后续判断正确答案
+            card.currentOptionMap = optionsToDisplay.map((item, displayIndex) => ({
+                displayIndex,
+                originalIndex: item.originalIndex,
+                isCorrect: item.isCorrect
+            }));
+            
+            optionsElement.innerHTML = '';
+            optionsToDisplay.forEach((item, displayIndex) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = item.text;
+                optionElement.dataset.displayIndex = displayIndex;
+                optionElement.dataset.originalIndex = item.originalIndex;
+                optionElement.addEventListener('click', () => selectOption(displayIndex));
+                optionsElement.appendChild(optionElement);
+            });
+            
+            resultElement.style.display = 'none';
+            resultElement.className = 'result';
+            
+            prevButton.disabled = currentCardIndex === 0;
+            nextButton.disabled = false;
+            aiButton.disabled = !answeredCards.has(card.id);
+            
+            updateProgress();
+            updateStats();
+        }
+
+        // 选择选项
+        function selectOption(selectedDisplayIndex) {
+            if (answeredCards.has(currentChapter.cards[currentCardIndex].id)) return;
+            
+            const card = currentChapter.cards[currentCardIndex];
+            const options = document.querySelectorAll('.option');
+            
+            // 获取当前卡片的选项映射
+            const optionMap = card.currentOptionMap || [];
+            const selectedOption = optionMap.find(item => item.displayIndex === selectedDisplayIndex);
+            const correctOption = optionMap.find(item => item.isCorrect);
+            
+            if (!selectedOption || !correctOption) return;
+            
+            // 标记正确和错误答案
+            options.forEach((option, index) => {
+                option.style.pointerEvents = 'none';
+                const optionData = optionMap.find(item => item.displayIndex === index);
+                if (optionData && optionData.isCorrect) {
+                    option.classList.add('correct');
+                } else if (index === selectedDisplayIndex && !selectedOption.isCorrect) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            // 显示结果
+            resultElement.style.display = 'block';
+            totalAttempts++;
+            
+            if (selectedOption.isCorrect) {
+                resultElement.className = 'result correct';
+                resultElement.textContent = '✓ 回答正确！';
+                correctAnswers++;
+            } else {
+                resultElement.className = 'result incorrect';
+                resultElement.textContent = `✗ 回答错误。正确答案是: ${card.options[correctOption.originalIndex]}`;
+            }
+            
+            // 记录已回答的卡片
+            answeredCards.add(card.id);
+            saveProgress();
+            
+            // 更新按钮状态
+            aiButton.disabled = false;
+        }
+
+        // 显示上一张卡片
+        function showPreviousCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                showCard();
+            }
+        }
+
+        // 显示下一张卡片
+        function showNextCard() {
+            if (currentCardIndex < currentChapter.cards.length - 1) {
+                currentCardIndex++;
+                showCard();
+            } else {
+                // 如果是最后一张卡片，显示完成消息
+                questionElement.textContent = '恭喜！您已完成本章节的所有卡片。';
+                optionsElement.innerHTML = '';
+                resultElement.style.display = 'none';
+                nextButton.disabled = true;
+                prevButton.disabled = true;
+                aiButton.disabled = true;
+            }
+        }
+
+        // 显示AI解析
+        function showAIExplanation() {
+            const card = currentChapter.cards[currentCardIndex];
+            aiExplanation.textContent = card.explanation;
+            aiModal.style.display = 'flex';
+        }
+
+        // 关闭AI解析
+        function closeAIExplanation() {
+            aiModal.style.display = 'none';
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            if (!currentChapter) return;
+            
+            const progress = (currentCardIndex + 1) / currentChapter.cards.length * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            if (!currentChapter) {
+                totalCardsElement.textContent = '0';
+                completedCardsElement.textContent = '0';
+                correctRateElement.textContent = '0%';
+                return;
+            }
+            
+            const totalCards = currentChapter.cards.length;
+            const completed = answeredCards.size;
+            const rate = totalAttempts > 0 ? Math.round((correctAnswers / totalAttempts) * 100) : 0;
+            
+            totalCardsElement.textContent = totalCards;
+            completedCardsElement.textContent = completed;
+            correctRateElement.textContent = `${rate}%`;
+        }
+
+        // 重置卡片显示
+        function resetCardDisplay() {
+            questionElement.textContent = '请选择书籍和章节开始学习';
+            optionsElement.innerHTML = '';
+            resultElement.style.display = 'none';
+            resultElement.className = 'result';
+            prevButton.disabled = true;
+            nextButton.disabled = true;
+            aiButton.disabled = true;
+            progressBar.style.width = '0%';
+            updateStats();
+        }
+
+        // 保存进度到localStorage
+        function saveProgress() {
+            const progress = {
+                answeredCards: Array.from(answeredCards),
+                correctAnswers,
+                totalAttempts
+            };
+            localStorage.setItem(`flashcard_progress_${currentBook.id}_${currentChapter.id}`, JSON.stringify(progress));
+        }
+
+        // 从localStorage加载进度
+        function loadProgress() {
+            if (!currentBook || !currentChapter) return;
+            
+            const progressKey = `flashcard_progress_${currentBook.id}_${currentChapter.id}`;
+            const savedProgress = localStorage.getItem(progressKey);
+            
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                answeredCards = new Set(progress.answeredCards);
+                correctAnswers = progress.correctAnswers || 0;
+                totalAttempts = progress.totalAttempts || 0;
+            }
+        }
+
+        // 启动应用
+        init();
+    </script>
+</body>
+</html>
