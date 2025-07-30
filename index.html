@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闪卡学习系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .selector-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .selector-group label {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+        }
+
+        .content {
+            padding: 40px;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .welcome {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .card {
+            display: none;
+        }
+
+        .card.active {
+            display: block;
+        }
+
+        .word-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .word {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .explain-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .explain-btn:hover {
+            background: #5a6fd8;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .sentence {
+            font-size: 20px;
+            color: #444;
+            font-weight: 500;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 16px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        
+        .sentence::before {
+            content: '💬';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .option:hover:not(.answered) {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .option.answered {
+            cursor: not-allowed;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .progress {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .score {
+            color: #4caf50;
+        }
+        
+        .explanation-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .explanation-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+        
+        .explanation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .explanation-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+        
+        .explanation-text {
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .explanation-text h1 {
+            color: #667eea;
+            margin: 20px 0 10px 0;
+            font-size: 20px;
+        }
+        
+        .explanation-text h2 {
+            color: #667eea;
+            margin: 15px 0 8px 0;
+            font-size: 18px;
+        }
+        
+        .explanation-text p {
+            margin-bottom: 10px;
+        }
+        
+        .explanation-text strong {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translate(-50%, -60%); opacity: 0; }
+            to { transform: translate(-50%, -50%); opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="selector-group">
+                <label>📚 书籍:</label>
+                <select id="bookSelect">
+                    <option value="">请选择书籍</option>
+                </select>
+            </div>
+            <div class="selector-group">
+                <label>📖 章节:</label>
+                <select id="chapterSelect">
+                    <option value="">请先选择书籍</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="welcome" id="welcome">
+                请选择书籍和章节开始学习
+            </div>
+            
+            <div class="card" id="flashcard">
+                <div class="word-row">
+                    <div class="word" id="word"></div>
+                    <button class="explain-btn" onclick="toggleExplanation()" title="查看单词解释">ℹ️</button>
+                </div>
+                <div class="sentence" id="sentence"></div>
+                <div class="options" id="options"></div>
+                
+                <div class="controls">
+                    <button class="nav-btn" id="prevBtn" onclick="previousQuestion()">上一题</button>
+                    <div class="progress">
+                        <span>进度: <span id="currentProgress">0</span>/<span id="totalQuestions">0</span></span>
+                        <span class="score">得分: <span id="score">0</span>%</span>
+                    </div>
+                    <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">下一题</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 单词解释面板 -->
+        <div class="explanation-panel" id="explanationPanel" onclick="closeExplanationOnOutsideClick(event)">
+            <div class="explanation-content" onclick="event.stopPropagation()">
+                <div class="explanation-header">
+                    <div class="explanation-title" id="explanationTitle"></div>
+                    <button class="close-btn" onclick="toggleExplanation()">✕</button>
+                </div>
+                <div class="explanation-text" id="explanationText"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let booksData = [];
+        let currentBook = null;
+        let currentChapter = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let questionOptions = []; // 存储每道题的固定选项顺序
+        let score = 0;
+        let currentExplanation = null;
+
+        // 初始化页面
+        async function init() {
+            await loadBooks();
+            setupEventListeners();
+        }
+
+        // 加载书籍数据
+        async function loadBooks() {
+            try {
+                const response = await fetch('./books/word1.json');
+                const data = await response.json();
+                booksData = [data];
+                
+                const bookSelect = document.getElementById('bookSelect');
+                bookSelect.innerHTML = '<option value="">请选择书籍</option>';
+                
+                booksData.forEach((book, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = book.book_name;
+                    bookSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('加载书籍数据失败:', error);
+            }
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            document.getElementById('bookSelect').addEventListener('change', onBookChange);
+            document.getElementById('chapterSelect').addEventListener('change', onChapterChange);
+        }
+
+        // 书籍选择变化
+        function onBookChange() {
+            const bookIndex = document.getElementById('bookSelect').value;
+            const chapterSelect = document.getElementById('chapterSelect');
+            
+            if (bookIndex === '') {
+                chapterSelect.innerHTML = '<option value="">请先选择书籍</option>';
+                return;
+            }
+            
+            currentBook = booksData[bookIndex];
+            chapterSelect.innerHTML = '<option value="">请选择章节</option>';
+            
+            currentBook.chapters.forEach((chapter, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = chapter.chapters_name;
+                chapterSelect.appendChild(option);
+            });
+        }
+
+        // 章节选择变化
+        function onChapterChange() {
+            const chapterIndex = document.getElementById('chapterSelect').value;
+            
+            if (chapterIndex === '') {
+                showWelcome();
+                return;
+            }
+            
+            currentChapter = currentBook.chapters[chapterIndex];
+            startPractice();
+        }
+
+        // 显示欢迎页面
+        function showWelcome() {
+            document.getElementById('welcome').style.display = 'block';
+            document.getElementById('flashcard').classList.remove('active');
+        }
+
+        // 开始练习
+        function startPractice() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            score = 0;
+            
+            // 为每道题预生成选项顺序
+            questionOptions = currentChapter.words.map(word => generateOptions(word));
+            
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('flashcard').classList.add('active');
+            
+            document.getElementById('totalQuestions').textContent = currentChapter.words.length;
+            
+            showQuestion();
+        }
+
+        // 显示题目
+        function showQuestion() {
+            const question = currentChapter.words[currentQuestionIndex];
+            
+            document.getElementById('word').textContent = question.word;
+            document.getElementById('sentence').textContent = question.sentence;
+            document.getElementById('currentProgress').textContent = currentQuestionIndex + 1;
+            
+            // 存储当前单词解释
+            currentExplanation = question.explanation;
+            
+            // 使用预生成的选项顺序
+            const options = questionOptions[currentQuestionIndex];
+            displayOptions(options, question);
+            
+            // 更新按钮状态
+            updateNavigationButtons();
+            
+            // 更新得分
+            updateScore();
+            
+            // 关闭解释面板
+            closeExplanation();
+        }
+
+        // 生成选项
+        function generateOptions(question) {
+            const options = [
+                { text: question.translation, correct: true },
+                { text: question.confused_answer_1, correct: false },
+                { text: question.confused_answer_2, correct: false },
+                { text: question.confused_answer_3, correct: false }
+            ];
+            
+            // 随机打乱选项
+            return options.sort(() => Math.random() - 0.5);
+        }
+
+        // 显示选项
+        function displayOptions(options, question) {
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option.text;
+                optionElement.onclick = () => selectOption(index, option.correct, question);
+                
+                // 如果已经答过题，显示答案状态
+                const userAnswer = userAnswers[currentQuestionIndex];
+                if (userAnswer !== undefined) {
+                    optionElement.classList.add('answered');
+                    if (option.correct) {
+                        optionElement.classList.add('correct');
+                    } else if (userAnswer.selectedIndex === index && !option.correct) {
+                        optionElement.classList.add('incorrect');
+                    }
+                }
+                
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        // 选择选项
+        function selectOption(optionIndex, isCorrect, question) {
+            // 如果已经答过题，不允许修改
+            if (userAnswers[currentQuestionIndex] !== undefined) {
+                return;
+            }
+            
+            // 存储完整的答案信息
+            userAnswers[currentQuestionIndex] = {
+                selectedIndex: optionIndex,
+                isCorrect: isCorrect
+            };
+            
+            // 更新选项显示
+            const options = document.querySelectorAll('.option');
+            options[optionIndex].classList.add('answered');
+            if (isCorrect) {
+                options[optionIndex].classList.add('correct');
+            } else {
+                options[optionIndex].classList.add('incorrect');
+                // 显示正确答案
+                options.forEach((option, index) => {
+                    if (option.textContent === question.translation) {
+                        option.classList.add('correct');
+                    }
+                });
+            }
+            
+            updateScore();
+        }
+
+        // 上一题
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentQuestionIndex < currentChapter.words.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            }
+        }
+
+        // 更新导航按钮状态
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === currentChapter.words.length - 1;
+        }
+
+        // 更新得分
+        function updateScore() {
+            let correctCount = 0;
+            let answeredCount = 0;
+            
+            userAnswers.forEach((answer) => {
+                if (answer !== undefined) {
+                    answeredCount++;
+                    if (answer.isCorrect) {
+                        correctCount++;
+                    }
+                }
+            });
+            
+            score = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+            document.getElementById('score').textContent = score;
+        }
+
+        // 切换单词解释面板
+        function toggleExplanation() {
+            const panel = document.getElementById('explanationPanel');
+            const isVisible = panel.style.display === 'block';
+            
+            if (isVisible) {
+                closeExplanation();
+            } else {
+                showExplanation();
+            }
+        }
+        
+        // 显示单词解释
+        function showExplanation() {
+            const panel = document.getElementById('explanationPanel');
+            const title = document.getElementById('explanationTitle');
+            const text = document.getElementById('explanationText');
+            
+            const question = currentChapter.words[currentQuestionIndex];
+            
+            title.textContent = question.word + ' - 单词解释';
+            
+            if (question.explanation) {
+                // 简单的Markdown渲染
+                let formattedText = question.explanation
+                    .replace(/# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n\n/g, '</p><p>')
+                    .replace(/\n/g, '<br>');
+                
+                formattedText = '<p>' + formattedText + '</p>';
+                text.innerHTML = formattedText;
+            } else {
+                text.innerHTML = '<p style="color: #666; font-style: italic;">暂无解释内容</p>';
+            }
+            
+            panel.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 关闭单词解释
+        function closeExplanation() {
+            const panel = document.getElementById('explanationPanel');
+            panel.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // 点击外部区域关闭
+        function closeExplanationOnOutsideClick(event) {
+            if (event.target === event.currentTarget) {
+                closeExplanation();
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+{
+    "book_name": "初中单词",
+    "chapters": [
+        {
+            "chapters_name": "第一张",
+            "words": [
+                {
+                    "id": 1,
+                    "word": "breakfast",
+                    "sentence": "I eat cereal for breakfast every morning.",
+                    "translation": "我每天早上吃麦片当早餐。",
+                    "confused_answer_1": "我每天早上吃麦片当午餐。",
+                    "confused_answer_2": "我每天早上吃麦片当晚餐。",
+                    "confused_answer_3": "我每天早上吃麦片当点心。",
+                    "explanation": "# breakfast\n\n**词性**：名词、动词\n\n**含义**：\n- 名词：早餐，指早晨起床后吃的第一餐\n- 动词：吃早餐\n\n**用法**：\n- 作为名词：通常与定冠词或不定冠词连用\n  - \"I have breakfast at 7 AM.\" (我早上7点吃早餐。)\n  - \"What did you have for breakfast?\" (你早餐吃了什么？)\n\n- 作为动词：较少单独使用，常与其他词搭配\n  - \"We breakfasted on toast and coffee.\" (我们吃烤面包和咖啡当早餐。)\n\n**常见搭配**：\n- have breakfast (吃早餐)\n- make breakfast (准备早餐)\n- skip breakfast (不吃早餐)\n- breakfast cereal (早餐麦片)\n- continental breakfast (欧陆式早餐)\n- breakfast buffet (早餐自助餐)\n\n**词源**：源自\"break fast\"(打破禁食)，指结束一夜的禁食状态。"
+                },
+                {
+                    "id": 2,
+                    "word": "word",
+                    "sentence": "I know the word \"apple\".",
+                    "translation": "我知道\"apple\"这个词。",
+                    "confused_answer_1": "我知道\"apple\"这个字。",
+                    "confused_answer_2": "我知道\"apple\"这个字母。",
+                    "confused_answer_3": "我知道\"apple\"这个音。",
+                    "explanation": "# 单词：word\n\n## 词性\n- 名词(n.)\n- 动词(v.)\n\n## 含义\n作为名词：\n- 词，单词，词语\n- 话，言语，言论\n- 消息，信息\n- 承诺，保证\n- 口令，暗号\n\n作为动词：\n- 用词语表达，措辞\n- 描述，表达\n\n## 常见搭配\n- by word of mouth 口头地\n- have a word with sb 与某人交谈\n- in other words 换句话说\n- give one's word 保证\n- put in a good word for sb 为某人美言\n- take sb at their word 相信某人的话\n- word processor 文字处理器\n\n## 用法示例\n- \"His words hurt my feelings.\" (他的话伤害了我的感情。)\n- \"I give you my word that I will be there.\" (我保证我会到那里。)\n- \"She worded her letter carefully.\" (她措辞谨慎地写了那封信。)\n\n## 相关习语\n- actions speak louder than words 事实胜于雄辩\n- break one's word 食言\n- have the last word 有最后的发言权"
+                },
+                {
+                    "id": 3,
+                    "word": "favorite",
+                    "sentence": "Visiting the beach is my favorite way to spend a summer day.",
+                    "translation": "去海滩是我度过夏日最喜欢的方式。",
+                    "confused_answer_1": "去海滩是我度过夏日最常的方式。",
+                    "confused_answer_2": "去海滩是我度过夏日最平常的方式。",
+                    "confused_answer_3": "去海滩是我度过夏日最普通的方式。",
+                    "explanation": "# favorite\n\n**词性**：形容词、名词\n\n**含义**：\n- 形容词：最喜欢的；特别喜爱的\n- 名词：最喜欢的人或物；特别喜爱的人或物\n\n**用法**：\n- 作形容词：置于名词前，如\"my favorite movie\"（我最喜欢的电影）\n- 作名词：单独使用或与物主代词连用，如\"Pizza is my favorite\"（披萨是我的最爱）\n\n**常见搭配**：\n- favorite + 名词：favorite food（最爱的食物）、favorite song（最爱的歌曲）\n- one's favorite：某人的最爱\n- old favorite：老经典；老朋友\n\n**例句**：\n- She is her parents' favorite child.（她是父母最疼爱的孩子。）\n- This restaurant is my favorite.（这家餐厅是我的最爱。）"
+                },
+                {
+                    "id": 4,
+                    "word": "love",
+                    "sentence": "I love spending time with my family on weekends.",
+                    "translation": "我喜欢在周末和家人共度时光。",
+                    "confused_answer_1": "我享受在周末和家人共度时光。",
+                    "confused_answer_2": "我珍惜在周末和家人共度时光。",
+                    "confused_answer_3": "我怀念在周末和家人共度时光。",
+                    "explanation": "# love\n\n**词性**：名词、动词\n\n**发音**：/lʌv/\n\n## 名词含义\n1. 爱，热爱：对某人或某物的深厚情感\n2. 恋爱，爱情：浪漫的情感关系\n3. 喜爱的事物：非常喜欢的人或物\n4. (网球等)零分：比赛中一方得零分\n\n## 动词含义\n1. 爱，热爱：对某人或某物有深厚感情\n2. 喜欢，喜爱：对某事物有强烈喜好\n\n## 常见搭配\n- **名词**：first love(初恋), true love(真爱), unconditional love(无条件的爱), love at first sight(一见钟情)\n- **动词**：fall in love with(爱上), love to do sth(喜欢做某事), love doing sth(喜欢做某事)\n\n## 常用短语\n- love me, love my dog(爱屋及乌)\n- tough love(严厉的爱)\n- love of one's life(一生挚爱)\n\n## 语法用法\n- 作为名词可数或不可数\n- 作为动词后可接名词、代词、动名词或不定式\n\n## 文化背景\n在西方文化中，\"love\"是核心情感概念，广泛用于文学、艺术和日常交流。",
+                    "created_at": "2025-07-30 08:19:38",
+                    "updated_at": "2025-07-30 08:31:54",
+                    "book_name": "初中单词",
+                    "chapters_name": "第一张"
+                },
+                {
+                    "id": 5,
+                    "word": "church",
+                    "sentence": "We go to church every Sunday.",
+                    "translation": "我们每个星期天都去教堂。",
+                    "confused_answer_1": "我们每个星期天都去寺庙。",
+                    "confused_answer_2": "我们每个星期天都去圣殿。",
+                    "confused_answer_3": "我们每个星期天都去礼拜堂。",
+                    "explanation": null
+                },
+                {
+                    "id": 6,
+                    "word": "enjoy",
+                    "sentence": "I enjoy reading books in my free time.",
+                    "translation": "我在空闲时间喜欢读书。",
+                    "confused_answer_1": "我在空闲时间热爱读书。",
+                    "confused_answer_2": "我在空闲时间欣赏读书。",
+                    "confused_answer_3": "我在空闲时间品味读书。",
+                    "explanation": null
+                }
+            ]
+        }
+    ]
+}
