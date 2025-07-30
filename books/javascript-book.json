@@ -1,0 +1,67 @@
+{
+  "id": "book1",
+  "title": "JavaScript高级程序设计",
+  "description": "深入学习JavaScript编程语言的核心概念和高级特性",
+  "chapters": [
+    {
+      "id": "chapter1",
+      "title": "第1章：JavaScript简介",
+      "cards": [
+        {
+          "id": "card1",
+          "question": "JavaScript是一种什么类型的编程语言？",
+          "options": [
+            "编译型语言",
+            "解释型语言", 
+            "汇编语言",
+            "机器语言"
+          ],
+          "correctAnswer": 1,
+          "explanation": "JavaScript是一种解释型语言，代码不需要编译，可以直接由浏览器解释执行。"
+        },
+        {
+          "id": "card2",
+          "question": "JavaScript是由哪家公司开发的？",
+          "options": [
+            "微软",
+            "谷歌",
+            "网景",
+            "苹果"
+          ],
+          "correctAnswer": 2,
+          "explanation": "JavaScript最初由网景公司的Brendan Eich在1995年开发，最初命名为LiveScript，后来改名为JavaScript。"
+        }
+      ]
+    },
+    {
+      "id": "chapter2",
+      "title": "第2章：HTML中的JavaScript",
+      "cards": [
+        {
+          "id": "card3",
+          "question": "以下哪个HTML标签用于引入JavaScript代码？",
+          "options": [
+            "<script>",
+            "<js>",
+            "<javascript>",
+            "<code>"
+          ],
+          "correctAnswer": 0,
+          "explanation": "<script>标签用于在HTML中引入JavaScript代码。"
+        },
+        {
+          "id": "card4",
+          "question": "在HTML中，哪个属性用于指定JavaScript代码？",
+          "options": [
+            "src",
+            "href",
+            "code",
+            "script"
+          ],
+          "correctAnswer": 0,
+          "explanation": "src属性用于指定外部JavaScript文件的URL。"
+        }
+      ]
+    }
+  ]
+}
